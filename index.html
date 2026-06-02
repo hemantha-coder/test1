@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy LMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="text-slate-300 selection:bg-amber-400 selection:text-slate-900">
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2"></div>
+
+    <!-- Login View -->
+    <div id="loginView" class="min-h-screen flex items-center justify-center p-5">
+        <div class="w-full max-w-sm bg-slate-900 border border-slate-700 rounded-2xl p-7 shadow-2xl animate-fade-in">
+            <div class="text-center mb-7">
+                <div class="text-4xl mb-2">📚</div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Academy LMS</h1>
+                <p class="text-slate-500 text-sm mt-1">Learning Management System</p>
+            </div>
+
+            <div id="roleSelection" class="space-y-3">
+                <button id="btnTeacherLoginMode"
+                    class="w-full bg-amber-400 text-slate-900 font-bold py-3 rounded-xl text-sm transition-transform hover:-translate-y-1">🎓
+                    Login as Teacher</button>
+                <button id="btnStudentLoginMode"
+                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-sm transition-transform hover:-translate-y-1">👨‍🎓
+                    Continue as Student</button>
+                <p class="text-slate-600 text-xs text-center mt-4">Student account requires no password for demo</p>
+            </div>
+
+            <div id="teacherLoginForm" class="space-y-3 hidden">
+                <div>
+                    <p class="text-slate-400 text-xs mb-1 font-semibold">Username</p>
+                    <input id="loginUn"
+                        class="w-full bg-slate-800 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-slate-400 text-sm transition-colors"
+                        placeholder="admin">
+                </div>
+                <div>
+                    <p class="text-slate-400 text-xs mb-1 font-semibold">Password</p>
+                    <input id="loginPw" type="password"
+                        class="w-full bg-slate-800 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-slate-400 text-sm transition-colors"
+                        placeholder="admin">
+                </div>
+                <p id="loginError"
+                    class="text-red-400 text-sm bg-red-500/10 rounded-xl px-3 py-2 border border-red-500/20 hidden"></p>
+                <button id="btnLoginSubmit"
+                    class="w-full bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold py-3 rounded-xl text-sm mt-2 transition-colors">Login</button>
+                <button id="btnLoginBack"
+                    class="w-full border border-slate-700 hover:bg-slate-800 text-slate-400 py-3 rounded-xl text-sm mt-2 transition-colors">Cancel</button>
+                <p class="text-slate-600 text-xs text-center mt-2">demo credentials — user: admin · pass: admin</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App View -->
+    <div id="appView" class="min-h-screen flex-col md:flex-row hidden">
+
+        <!-- Mobile Header -->
+        <div
+            class="md:hidden flex justify-between items-center bg-slate-900 p-4 border-b border-slate-800 sticky top-0 z-30 shadow-md w-full">
+            <div class="flex items-center gap-3">
+                <div class="bg-slate-800/80 p-2 rounded-xl text-xl shadow-inner border border-slate-700/50">📚</div>
+                <span class="text-white font-bold tracking-tight text-lg">Academy</span>
+            </div>
+            <button id="mobileMenuBtn" class="text-white hover:text-amber-400 transition-colors p-2 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Sidebar -->
+        <div id="sidebar"
+            class="fixed inset-y-0 left-0 z-40 w-64 border-r transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out md:static md:flex-shrink-0 flex flex-col">
+            <div class="p-6 flex-1">
+                <div class="md:flex items-center gap-3 mb-10 hidden">
+                    <div class="bg-slate-800/80 p-2 rounded-xl text-xl shadow-inner border border-slate-700/50">📚</div>
+                    <span class="text-white font-bold tracking-tight text-xl">Academy</span>
+                </div>
+
+                <div class="mb-8 p-4 bg-slate-950/30 rounded-2xl border border-slate-800/50">
+                    <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Logged in as</p>
+                    <p id="navUsername" class="text-white font-bold truncate text-base"></p>
+                    <p id="navRoleBadge"
+                        class="text-xs font-bold mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-900 border capitalize">
+                    </p>
+                </div>
+
+                <nav id="navMenu" class="space-y-1.5"></nav>
+            </div>
+
+            <div class="p-6 border-t border-slate-800/50 bg-slate-900/20">
+                <button id="btnLogout"
+                    class="w-full bg-slate-950 border border-slate-800 hover:border-slate-600 hover:bg-red-500/10 hover:text-red-400 text-slate-400 py-3.5 rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2">
+                    <span>🚪</span> Sign Out
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile menu overlay -->
+        <div id="mobileMenuOverlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-30 hidden animate-fade-in">
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 overflow-y-auto relative w-full h-screen" style="background: transparent;">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none">
+            </div>
+
+            <div id="mainContent"
+                class="max-w-4xl mx-auto w-full p-5 md:p-8 lg:p-12 pb-24 relative z-10 animate-fade-in">
+                <!-- Dynamic Content Loads Here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Course Modal -->
+    <div id="editCourseModal"
+        class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden animate-fade-in">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-white font-bold text-xl">Edit Course</h2>
+                <button id="btnCloseEditModal"
+                    class="text-slate-400 hover:text-white transition-colors text-xl">✕</button>
+            </div>
+            <input id="editCourseTitle"
+                class="w-full bg-slate-800 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-slate-400 text-sm"
+                placeholder="Title">
+            <select id="editCourseCode"
+                class="w-full bg-slate-800 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-slate-400 text-sm appearance-none cursor-pointer">
+                <option value="" disabled>Code *</option>
+                <option value="AI">AI</option>
+                <option value="DMW">DMW</option>
+                <option value="MAD">MAD</option>
+                <option value="WCD">WCD</option>
+                <option value="Other">Other</option>
+            </select>
+            <textarea id="editCourseDesc"
+                class="w-full bg-slate-800 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-slate-400 text-sm h-24 resize-none"
+                placeholder="Description"></textarea>
+            <div class="flex gap-3 pt-2">
+                <button id="btnCancelEditCourse"
+                    class="flex-1 border border-slate-600 hover:bg-slate-800 text-slate-300 py-3 rounded-xl text-sm font-semibold transition-colors">Cancel</button>
+                <button id="btnSaveEditCourse"
+                    class="flex-1 bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold py-3 rounded-xl text-sm transition-colors shadow-md">Save
+                    Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
